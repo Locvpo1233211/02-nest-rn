@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { hashPasswordHelper } from '@/helpers/util';
-
+import aqp from 'api-query-params';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
@@ -27,8 +27,28 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(queryString, current, pageSize) {
+    const { filter, sort } = aqp(queryString);
+    delete filter.current;
+    delete filter.pageSize;
+    const skip = (current - 1) * pageSize;
+    const totalItems = (await this.userModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const result = await this.userModel
+      .find(filter)
+      .skip(skip)
+      .limit(pageSize)
+      .sort(sort as any);
+    console.log(filter);
+    return {
+      meta: {
+        current: current,
+        pageSize: pageSize,
+        pages: totalPages,
+        total: totalItems,
+      },
+      result: result,
+    };
   }
 
   findOne(id: number) {

@@ -12,6 +12,7 @@ import { MenusModule } from './menus/menus.module';
 import { MenuItemsModule } from './menu.items/menu.items.module';
 import { MenuItemOptionsModule } from './menu.item.options/menu.item.options.module';
 import { LikesModule } from './likes/likes.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     UsersModule,
@@ -33,6 +34,7 @@ import { LikesModule } from './likes/likes.module';
     MenuItemsModule,
     MenuItemOptionsModule,
     LikesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

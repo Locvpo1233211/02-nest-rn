@@ -1,9 +1,17 @@
-import { Controller, Get, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './auth/passport/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
+import { LoggingInterceptor } from './interceptor/logging.interceptor';
 
 @Controller()
 export class AppController {
@@ -11,6 +19,7 @@ export class AppController {
     private readonly appService: AppService,
     private authService: AuthService,
   ) {}
+  @UseInterceptors(LoggingInterceptor)
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
   async login(@Request() req) {

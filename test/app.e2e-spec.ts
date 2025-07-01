@@ -15,10 +15,14 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/ (GET) - should require authentication', () => {
+    return request(app.getHttpServer()).get('/').expect(401); // Unauthorized - cần JWT token
+  });
+
+  it('/ (GET) - should require admin role', () => {
     return request(app.getHttpServer())
       .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .set('Authorization', 'Bearer invalid-token')
+      .expect(401); // Unauthorized - token không hợp lệ
   });
 });

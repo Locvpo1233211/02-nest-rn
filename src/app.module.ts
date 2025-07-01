@@ -13,6 +13,8 @@ import { MenuItemsModule } from './menu.items/menu.items.module';
 import { MenuItemOptionsModule } from './menu.item.options/menu.item.options.module';
 import { LikesModule } from './likes/likes.module';
 import { AuthModule } from './auth/auth.module';
+import { SolanaModule } from './solana/solana.module';
+
 @Module({
   imports: [
     UsersModule,
@@ -35,6 +37,8 @@ import { AuthModule } from './auth/auth.module';
     MenuItemOptionsModule,
     LikesModule,
     AuthModule,
+
+    SolanaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

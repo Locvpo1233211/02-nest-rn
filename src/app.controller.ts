@@ -3,8 +3,10 @@ import {
   Get,
   Post,
   UseGuards,
-  Request,
+  Req,
   UseInterceptors,
+  Body,
+  Res,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,6 +16,9 @@ import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { RoleGuard } from './guards/role.guard';
 import { Roles } from './decorators/roles.decorator';
+import { Public } from './decorators/public.decorator';
+import { Request, Response } from 'express';
+import { User } from './decorators/user.decorator';
 
 @Controller()
 export class AppController {
@@ -22,15 +27,35 @@ export class AppController {
     private authService: AuthService,
   ) {}
   @UseInterceptors(LoggingInterceptor)
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user._doc);
+  async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.login(req.user._doc, res);
+
+    return result;
   }
-  @UseGuards(LocalAuthGuard)
+
   @Post('auth/logout')
-  async logout(@Request() req) {
-    return req.logout();
+  async logout(
+    @Req() req: Request,
+    @User() user: any,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    console.log(user);
+    return await this.authService.logout(user, res);
+  }
+
+  @Public()
+  @Post('auth/register')
+  async register(@Body() body: any) {
+    return this.authService.register(body);
+  }
+  @Public()
+  @Get('auth/refresh-token')
+  async refreshToken(@Req() request: Request) {
+    console.log(request.cookies);
+    return this.authService.refreshToken(request);
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard)

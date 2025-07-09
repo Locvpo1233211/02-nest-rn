@@ -14,6 +14,8 @@ import { MenuItemOptionsModule } from './menu.item.options/menu.item.options.mod
 import { LikesModule } from './likes/likes.module';
 import { AuthModule } from './auth/auth.module';
 import { SolanaModule } from './solana/solana.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -41,6 +43,12 @@ import { SolanaModule } from './solana/solana.module';
     SolanaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

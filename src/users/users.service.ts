@@ -6,6 +6,9 @@ import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { hashPasswordHelper } from '@/helpers/util';
 import aqp from 'api-query-params';
+import { v4 as uuidv4 } from 'uuid';
+import * as dayjs from 'dayjs';
+
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
@@ -84,5 +87,28 @@ export class UsersService {
   // find user by email
   async findUserByEmail(email: string) {
     return await this.userModel.findOne({ email });
+  }
+  async handleRegister(body: any) {
+    const emailExists = await this.emailExists(body.email);
+    if (emailExists) {
+      throw new BadRequestException('Email already exists');
+    }
+    const hashedPassword = await hashPasswordHelper(body.password);
+    const user = await this.userModel.create({
+      email: body.email,
+      name: body.name,
+      password: hashedPassword,
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(1, 'day').format('YYYY-MM-DD HH:mm:ss'),
+    });
+    return user;
+    // Gửi email
+  }
+
+  // Lưu RefreshToken vào db
+  async updateUserRefeshToken(refreshToken: string, _id: string) {
+    await this.userModel.findByIdAndUpdate(_id, {
+      refreshToken: refreshToken,
+    });
   }
 }

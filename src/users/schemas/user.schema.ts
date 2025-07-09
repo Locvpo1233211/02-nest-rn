@@ -26,6 +26,9 @@ export class User {
   @Prop({ default: 'USER' })
   role: string;
 
+  @Prop()
+  refreshToken: string;
+
   @Prop({ default: 'LOCAL' })
   accountType: string;
 

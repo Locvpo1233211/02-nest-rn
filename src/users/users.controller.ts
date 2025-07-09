@@ -12,6 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ResponseMessage } from '@/decorators/response-message.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +24,7 @@ export class UsersController {
   }
 
   @Get()
+  @ResponseMessage('Get users successfully')
   findAll(
     @Query() query: any,
     @Query('current') current: number = 1,

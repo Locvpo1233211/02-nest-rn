@@ -20,15 +20,3 @@ export class LoggingInterceptor {
       .pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
   }
 }
-
-@Injectable()
-export class TransformInterceptor<T>
-  implements NestInterceptor<T, Response<T>>
-{
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<Response<T>> {
-    return next.handle().pipe(map((data) => ({ data })));
-  }
-}

@@ -19,12 +19,14 @@ import { Roles } from './decorators/roles.decorator';
 import { Public } from './decorators/public.decorator';
 import { Request, Response } from 'express';
 import { User } from './decorators/user.decorator';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private authService: AuthService,
+    private mailerService: MailerService,
   ) {}
   @UseInterceptors(LoggingInterceptor)
   @Public()
@@ -63,5 +65,21 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+  @Public()
+  @Post('mail')
+  async sendMail() {
+    await this.mailerService
+      .sendMail({
+        to: 'nbpl1403@gmail.com', // list of receivers
+
+        subject: 'Testing Nest MailerModule ✔', // Subject line
+        text: 'welcome', // plaintext body
+        html: '<b>ne caicaiccaicaciaccc</b>', // HTML body content
+      })
+      .then(() => {})
+      .catch(() => {});
+
+    return 'success';
   }
 }

@@ -69,16 +69,22 @@ export class AppController {
   @Public()
   @Post('mail')
   async sendMail() {
-    await this.mailerService
-      .sendMail({
+    try {
+      await this.mailerService.sendMail({
         to: 'nbpl1403@gmail.com', // list of receivers
 
         subject: 'Testing Nest MailerModule ✔', // Subject line
-        text: 'welcome', // plaintext body
-        html: '<b>ne caicaiccaicaciaccc</b>', // HTML body content
-      })
-      .then(() => {})
-      .catch(() => {});
+        text: 'welcome',
+        template: 'test',
+        context: {
+          // ✏️ filling curly brackets with content
+          name: 'a',
+          activationCode: 1233212,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
 
     return 'success';
   }
